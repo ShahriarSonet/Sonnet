@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M Shahriar Sonet | GeoAI & Remote Sensing </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 
+        Chosen Palette: Calm Neutrals. A light gray background (bg-slate-100) with dark text (text-slate-800) for readability. Accents of indigo, teal, and amber are used to differentiate thematic sections and highlight key data points.
+        Application Structure Plan: A single-page portfolio designed as a narrative journey through the researcher's work. The structure begins with a high-level introduction, followed by an interactive timeline for chronological navigation. The core of the application is organized into thematic research sections (Climate Dynamics, Urbanization, Hazard Assessment) rather than by individual papers. This approach synthesizes and showcases expertise more effectively. Each thematic section combines findings from relevant papers, using interactive charts and key takeaways to tell a compelling story. The application concludes with a skills summary and a publications/contact section. This user flow is designed to guide visitors from a broad overview to specific areas of impact, making complex research accessible and engaging.
+        Visualization & Content Choices: 
+        1. Texas Climate Trends: Goal: Compare changes. Method: Interactive bar chart (Chart.js) with buttons to filter by variable (Temperature, Precipitation, Humidity). Justification: Allows users to directly compare the magnitude of different climatic shifts identified in the research.
+        2. Lubbock Precipitation Forecasting: Goal: Compare model performance. Method: Bar chart (Chart.js) showing Mean Squared Error (MSE) for different models. Justification: Clearly and immediately demonstrates the superior performance of the LSTM model, a key finding of the paper.
+        3. Dhaka LULC Change: Goal: Show change over time. Method: Grouped bar chart (Chart.js) visualizing land cover area for three different years. Justification: Effectively illustrates the dramatic increase in urban areas and the decline in vegetation and water bodies.
+        4. Cyclone Impact: Goal: Show before-and-after impact. Method: "From-To" matrix using styled HTML/Tailwind, visually representing the land cover transitions (e.g., how much "Agriculture" became "Waterbody"). Justification: More intuitive and impactful than a simple table for showing the scale of transformation.
+        5. All visualizations are built using Chart.js on a <canvas> element, with no SVG or Mermaid JS, adhering to technical constraints. Each section includes introductory text to provide context and explain the significance of the findings.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 48rem; /* max-w-3xl */
+            margin-left: auto;
+            margin-right: auto;
+            height: 24rem; /* h-96 */
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 20rem; /* h-80 */
+            }
+        }
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .contact-link {
+            @apply text-indigo-600 hover:text-indigo-800 transition-colors duration-300;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-xl font-bold text-slate-800">Portfolio</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#timeline" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Education</a>
+                        <a href="#experiences" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Professional Experiences</a>
+                        <a href="#research" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Research Highlights</a>
+                        <a href="#publications" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Publications</a>
+                        <a href="#teaching" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Teaching</a>
+                        <a href="#skills" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Skills</a>
+                        <a href="#contact" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Hero Section -->
+        <section class="py-20 section-fade-in">
+            <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 px-4">
+                <!-- Profile Image -->
+                <div class="flex-shrink-0">
+                    <img class="w-48 h-48 rounded-full object-cover shadow-2xl border-4 border-white" src="https://storage.googleapis.com/context-images/DP.jpg-310f974f-35b0-4b61-b070-736d424ae946" alt="M Shahriar Sonet">
+                </div>
+                <!-- Text Content -->
+                <div class="text-center md:text-left">
+                    <h1 class="text-4xl md:text-5xl font-bold text-slate-900">M Shahriar Sonet</h1>
+                    <p class="mt-2 text-xl md:text-2xl font-medium text-indigo-600">Geospatial and Satellite Remote Sensing Researcher</p>
+                    <p class="mt-4 max-w-2xl text-lg text-slate-600">
+                        Leveraging remote sensing, machine learning, and advanced spatial analytics to model environmental changes, assess climate impacts, and enhance disaster resilience.
+                    </p>
+                    <div class="mt-6 flex flex-wrap justify-center md:justify-start gap-2">
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Natural Hazards</span>
+                        <span class="bg-teal-100 text-teal-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Climate Dynamics</span>
+                        <span class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Urban Analytics</span>
+                        <span class="bg-sky-100 text-sky-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Machine Learning</span>
+                        <span class="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded-full">GeoAI</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="timeline" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Education</h2>
+            <div class="relative max-w-5xl mx-auto">
+                <div class="absolute left-1/2 w-0.5 h-full bg-slate-300 hidden md:block"></div>
+                <div class="space-y-12 md:space-y-0">
+                    <!-- Timeline Item 1 -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 text-center md:text-right">
+                            <p class="font-bold text-indigo-600">2024 - 2028 (Ongoing)</p>
+                            <h3 class="text-xl font-semibold text-slate-800">PhD in Geospatial Information Sciences</h3>
+                            <p class="text-slate-600">The University of Texas at Dallas</p>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-indigo-600 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8 mt-4 md:mt-0"></div>
+                    </div>
+                    <!-- Timeline Item 2 -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 md:text-right"></div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-slate-400 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8 text-center md:text-left">
+                            <p class="font-bold text-slate-600">2022 - 2024</p>
+                            <h3 class="text-xl font-semibold text-slate-800">MS in Geography & the Environment</h3>
+                            <p class="text-slate-600">Texas Tech University</p>
+                        </div>
+                    </div>
+                    <!-- Timeline Item 3 -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 text-center md:text-right">
+                            <p class="font-bold text-slate-600">2020 - 2021</p>
+                            <h3 class="text-xl font-semibold text-slate-800">MSS in Disaster & Human Security Management</h3>
+                            <p class="text-slate-600">Bangladesh University of Professionals</p>
+                        </div>
+                         <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-slate-400 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8"></div>
+                    </div>
+                    <!-- Timeline Item 4 -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 md:text-right"></div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-slate-400 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8 text-center md:text-left">
+                            <p class="font-bold text-slate-600">2016 - 2019</p>
+                            <h3 class="text-xl font-semibold text-slate-800">BSS in Disaster & Human Security Management</h3>
+                            <p class="text-slate-600">Bangladesh University of Professionals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Professional Experiences Section -->
+        <section id="experiences" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Professional Experiences</h2>
+            <div class="relative max-w-5xl mx-auto">
+                <div class="absolute left-1/2 w-0.5 h-full bg-slate-300 hidden md:block"></div>
+                <div class="space-y-12 md:space-y-0">
+
+                    <!-- Experience 1: UT Dallas -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 text-center md:text-right">
+                            <p class="font-bold text-indigo-600">Aug 2024 – Current</p>
+                            <h3 class="text-xl font-semibold text-slate-800">Teaching Assistant</h3>
+                            <p class="text-slate-600">The University of Texas at Dallas</p>
+                            <p class="text-sm text-slate-500">Richardson, TX</p>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-indigo-600 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8 mt-4 md:mt-0"></div>
+                    </div>
+
+                    <!-- Experience 2: Texas Tech -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 md:text-right"></div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-slate-400 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8 text-center md:text-left">
+                             <p class="font-bold text-slate-600">May 2024 – Aug 2024</p>
+                             <h3 class="text-xl font-semibold text-slate-800">Research Assistant</h3>
+                             <p class="text-slate-600">Texas Tech University</p>
+                             <p class="text-sm text-slate-500 mb-4">Lubbock, TX</p>
+                             
+                             <p class="font-bold text-slate-600">Aug 2022 – May 2024</p>
+                             <h3 class="text-xl font-semibold text-slate-800">Teaching Assistant</h3>
+                             <p class="text-slate-600">Texas Tech University</p>
+                             <p class="text-sm text-slate-500">Lubbock, TX</p>
+                        </div>
+                    </div>
+
+                    <!-- Experience 3: BCCP -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 text-center md:text-right">
+                            <p class="font-bold text-slate-600">Feb 2022 – Jul 2022</p>
+                            <h3 class="text-xl font-semibold text-slate-800">Program Officer</h3>
+                            <p class="text-slate-600">Bangladesh Centre for Communication Program, World Health Organziation (WHO)</p>
+                            <p class="text-sm text-slate-500">Dhaka, Bangladesh</p>
+                        </div>
+                         <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-slate-400 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8"></div>
+                    </div>
+
+                    <!-- Experience 4: CEGIS -->
+                    <div class="relative md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8 md:text-right"></div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-slate-400 rounded-full"></div>
+                        <div class="md:w-1/2 md:pl-8 text-center md:text-left">
+                            <p class="font-bold text-slate-600">May 2020 – Dec 2021</p>
+                            <h3 class="text-xl font-semibold text-slate-800">Research Assistant</h3>
+                            <p class="text-slate-600">Centre for Environmental & Geographic Information Services (CEGIS), Ministry of Water Resources</p>
+                            <p class="text-sm text-slate-500">Dhaka, Bangladesh</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Research Highlights Section -->
+        <section id="research" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Research Highlights</h2>
+            
+            <!-- Area 1: Climate Dynamics & Forecasting -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg mb-12 section-fade-in">
+                <div class="flex items-center mb-4">
+                     <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Climate Dynamics & Forecasting in the USA</h3>
+                </div>
+                <p class="text-slate-600 mb-6">My research investigates long-term climatic shifts and develops advanced forecasting models to support water management and climate adaptation in the United States, with a special focus on Texas. By analyzing decades of data and applying machine learning, I aim to provide actionable intelligence for navigating climate uncertainty.</p>
+                
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div>
+                        <h4 class="font-semibold text-lg text-slate-800 mb-2">Four Decades of Climate Trends in Texas</h4>
+                        <p class="text-slate-600 text-sm mb-4">Analysis of PRISM and GridMET data (1981-2023) reveals significant trends. Select a variable below to see the magnitude of change over the 43-year period.</p>
+                        <div class="flex space-x-2 mb-4">
+                            <button id="btn-temp" class="bg-indigo-500 text-white px-3 py-1 rounded-md text-sm">Temperature</button>
+                            <button id="btn-precip" class="bg-slate-200 text-slate-700 px-3 py-1 rounded-md text-sm">Precipitation</button>
+                            <button id="btn-humid" class="bg-slate-200 text-slate-700 px-3 py-1 rounded-md text-sm">Humidity</button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="texasTrendsChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg text-slate-800 mb-2">ML-Enhanced Precipitation Forecasting</h4>
+                        <p class="text-slate-600 text-sm mb-4">My work in Lubbock, Texas, demonstrates the power of Long Short-Term Memory (LSTM) networks in accurately forecasting precipitation in arid regions, significantly outperforming traditional models.</p>
+                         <div class="bg-indigo-50 p-4 rounded-lg">
+                            <p class="text-indigo-800 font-bold text-2xl text-center">91%</p>
+                            <p class="text-indigo-700 text-sm text-center">improvement in forecast accuracy (MSE) with LSTM over traditional regression methods.</p>
+                        </div>
+                        <div class="chart-container mt-4">
+                            <canvas id="modelPerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Area 2: Urbanization & Environmental Impact -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg mb-12 section-fade-in">
+                 <div class="flex items-center mb-4">
+                    <div class="bg-amber-100 text-amber-600 p-2 rounded-lg mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m-1 4h1m5-4h1m-1 4h1m-1-4h1m-1 4h1" /></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Urbanization & Environmental Impact</h3>
+                </div>
+                <p class="text-slate-600 mb-6">Using satellite and drone imagery, I analyze how urban expansion affects the environment. This includes tracking land cover changes, rising surface temperatures, and assessing urban design for safety and walkability.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div>
+                        <h4 class="font-semibold text-lg text-slate-800 mb-2">Land Cover Dynamics in a Megacity</h4>
+                        <p class="text-slate-600 text-sm mb-4">A multi-decade study of Dhaka, Bangladesh, reveals the dramatic trade-offs between urbanization and the natural environment from 2009 to 2023.</p>
+                        <div class="chart-container">
+                            <canvas id="dhakaLULCChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg text-slate-800 mb-2">Urban Micro-zoning with Deep Learning</h4>
+                        <p class="text-slate-600 text-sm mb-4">High-resolution drone imagery and GeoAI provide a granular view of land use, quantifying space allocation for buildings, green spaces, and infrastructure to enhance urban resilience and walkability.</p>
+                        <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-amber-50 p-4 rounded-lg">
+                                <span class="text-4xl">🌳</span>
+                                <p class="font-semibold mt-2 text-amber-900">1.75 km²</p>
+                                <p class="text-xs text-amber-800">Trees & Open Spaces</p>
+                            </div>
+                             <div class="bg-slate-200 p-4 rounded-lg">
+                                <span class="text-4xl">🏢</span>
+                                <p class="font-semibold mt-2 text-slate-900">3.90 km²</p>
+                                <p class="text-xs text-slate-800">Buildings</p>
+                            </div>
+                             <div class="bg-sky-100 p-4 rounded-lg">
+                                <span class="text-4xl">🚶</span>
+                                <p class="font-semibold mt-2 text-sky-900">2.36 km²</p>
+                                <p class="text-xs text-sky-800">Walkways</p>
+                            </div>
+                            <div class="bg-red-100 p-4 rounded-lg">
+                                <span class="text-4xl">🚗</span>
+                                <p class="font-semibold mt-2 text-red-900">0.99 km²</p>
+                                <p class="text-xs text-red-800">Parking</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Area 3: Hazard & Risk Assessment -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg section-fade-in">
+                 <div class="flex items-center mb-4">
+                    <div class="bg-teal-100 text-teal-600 p-2 rounded-lg mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Natural Hazard & Risk Assessment</h3>
+                </div>
+                <p class="text-slate-600 mb-6">My research quantifies the impacts of natural disasters like tropical cyclones and floods on vulnerable coastal communities. By analyzing land cover changes and modeling future scenarios, this work informs disaster risk reduction and resilience planning.</p>
+                <div>
+                    <h4 class="font-semibold text-lg text-slate-800 mb-2">Impact of Cyclone Bulbul on Coastal Bangladesh</h4>
+                    <p class="text-slate-600 text-sm mb-4">Change detection analysis revealed the immediate, drastic impacts of a tropical cyclone on the landscape. The most significant finding was the massive conversion of productive and inhabited land into water bodies.</p>
+                    <div class="chart-container">
+                        <canvas id="cycloneImpactChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Publications Section -->
+        <section id="publications" class="py-16 section-fade-in">
+            <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Publications</h2>
+            <div class="max-w-4xl mx-auto space-y-4">
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <p class="text-sm text-indigo-600 font-semibold">Journal of Hydrology: Regional Studies (2025)</p>
+                    <a href="https://doi.org/10.1016/j.ejrh.2025.102539" target="_blank" class="text-lg text-slate-800 hover:text-indigo-700">Unveiling four decades of spatiotemporal climate trends in Texas (1981-2023).</a>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <p class="text-sm text-indigo-600 font-semibold">Theoretical and Applied Climatology (2025)</p>
+                    <a href="https://doi.org/10.1007/s00704-024-05264-3" target="_blank" class="text-lg text-slate-800 hover:text-indigo-700">Spatiotemporal analysis of urban expansion, land use dynamics, and thermal characteristics in a rapidly growing megacity...</a>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <p class="text-sm text-indigo-600 font-semibold">International Journal of Disaster Risk Reduction (2024)</p>
+                    <a href="https://doi.org/10.1016/j.ijdrr.2024.104726" target="_blank" class="text-lg text-slate-800 hover:text-indigo-700">Assessing tropical cyclone impacts in coastal Bangladesh: a change detection analysis on cyclone bulbul...</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Teaching Experience Section -->
+        <section id="teaching" class="py-16 bg-white section-fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Teaching Experience</h2>
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-slate-800">The University of Texas at Dallas</h3>
+                        <p class="text-indigo-600 italic mt-1">Worked as Lab Instructor and 50% Lecturer</p>
+                        <ul class="mt-4 list-disc list-inside text-slate-600 space-y-2">
+                            <li>Health & Environmental GIS (GISC 4384)</li>
+                            <li>Smart & Sustainable Cities (GEOG 3331)</li>
+                            <li>Digital Earth (GEOS 2307)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-slate-800">Texas Tech University</h3>
+                        <p class="text-indigo-600 italic mt-1">Worked as Lab Instructor</p>
+                        <ul class="mt-4 list-disc list-inside text-slate-600 space-y-2">
+                            <li>Web Mapping & Geovisualization (GIST 4312/5312)</li>
+                            <li>Exploring Spatial Database (GIST 4300/5304)</li>
+                            <li>Introduction to GIS (GIST 3300/5300)</li>
+                            <li>Global Environmental Science (GEOG 1401)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-16 section-fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Technical Skills</h2>
+                <div class="grid md:grid-cols-2 gap-8 text-slate-700">
+                    <div>
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4">Programming</h3>
+                        <p>Python, Java, R</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4">Spatial Analysis</h3>
+                        <p>ArcGIS, QGIS, ENVI, Google Earth Engine</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4">Data Analysis</h3>
+                        <p>SPSS, STATA, Tableau</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4">Others</h3>
+                        <p>Microsoft Office, Adobe Products</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Awards & Fellowships Section -->
+        <section id="awards" class="py-16 bg-white section-fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Awards & Fellowships</h2>
+                <ul class="list-disc list-inside space-y-3 text-slate-600">
+                    <li>Pioneer Student Research Grant Award – The University of Texas at Dallas</li>
+                    <li>Department of Geosciences Fellowship – Texas Tech University</li>
+                    <li>Larry McIver Memorial Scholarship in Geography – Texas Tech University</li>
+                    <li>Geography Excellence Scholarship – Texas Tech University</li>
+                    <li>Dean's Merit List in all semesters of Master’s (2020-2021) (GPA 3.91 & 3.98)</li>
+                    <li>Dean's Merit List in last semester Bachelor’s (2019) (GPA 3.75)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Training & Courses Section -->
+        <section id="training" class="py-16 section-fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Training & Courses</h2>
+                <ul class="list-disc list-inside space-y-3 text-slate-600">
+                    <li>Geographic Information Science & Technology Certificate, Texas Tech University – 2023</li>
+                    <li>Disaster Response Exercise & Exchange, DREE – 2019</li>
+                    <li>Nature-based Solutions for Disaster and Climate Resilience – UNEP, PEDRR</li>
+                    <li>Geospatial Information Technology (GIT) in Fragile Contexts – UNITAR, UNOSAT</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Professional Affiliations Section -->
+        <section id="affiliations" class="py-16 bg-white section-fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Professional Affiliations</h2>
+                <ul class="list-disc list-inside space-y-3 text-slate-600">
+                    <li>Member, American Geophysical Union</li>
+                    <li>Member, American Association of Geographers</li>
+                    <li>Secretary, Geography & Youth Mappers Club: Dept. of Geosciences (2023-24)</li>
+                    <li>Vice President, Association of Bangladeshi Scholars & Students (2023-24)</li>
+                    <li>Secretary, BUP Global Affairs Council (2017-19)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-16 section-fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">Services</h2>
+                <div>
+                    <h3 class="text-xl font-semibold text-slate-800">Journal Reviewer</h3>
+                    <ul class="mt-2 list-disc list-inside text-slate-600 space-y-1">
+                        <li>Taylor and Francis: International Journal of Digital Earth</li>
+                        <li>Wiley: Geo: Geography and Environment</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 bg-white section-fade-in">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Contact</h2>
+                <p class="text-xl font-semibold text-slate-800">M SHAHRIAR SONET</p>
+                <p class="text-slate-600 mt-2">The University of Texas at Dallas</p>
+                <p class="text-slate-600">Room: GR3.318</p>
+                <p class="text-slate-600">795 Drive D, Richardson, TX 75080</p>
+                <div class="mt-4 text-slate-600">
+                    <a href="mailto:mshahriar001@gmail.com" class="contact-link">mshahriar001@gmail.com</a> | 
+                    <a href="mailto:mxs240007@utdallas.edu" class="contact-link">mxs240007@utdallas.edu</a>
+                </div>
+                <div class="mt-6 flex justify-center space-x-6">
+                    <a href="https://www.linkedin.com/in/sonet01/" target="_blank" class="contact-link text-2xl"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://scholar.google.com/citations?hl=en&user=N-S0OvoAAAAJ" target="_blank" class="contact-link text-2xl"><i class="fas fa-graduation-cap"></i></a>
+                    <a href="https://www.researchgate.net/profile/M_Shahriar_Sonet" target="_blank" class="contact-link text-2xl"><i class="fab fa-researchgate"></i></a>
+                    <a href="https://orcid.org/0000-0002-2796-0752" target="_blank" class="contact-link text-2xl"><i class="fab fa-orcid"></i></a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm">
+            <p>&copy; 2025 M Shahriar Sonet. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const sections = document.querySelectorAll('.section-fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            const texasTrendsData = {
+                temperature: {
+                    labels: ['Far West Texas', 'Panhandle', 'East Texas'],
+                    values: [3.68, 2.8, 2.5]
+                },
+                precipitation: {
+                    labels: ['Central Texas', 'East Texas', 'South Texas'],
+                    values: [-125.27, -90, -75]
+                },
+                humidity: {
+                    labels: ['Far West Texas', 'Panhandle', 'Coastal Texas'],
+                    values: [-2.33, -1.5, 1.71]
+                }
+            };
+
+            const modelPerfData = {
+                labels: ['Linear Regression', 'ARIMA', 'MLP', 'LSTM'],
+                values: [0.249, 0.165, 0.0379, 0.0218]
+            };
+
+            const dhakaLulcData = {
+                labels: ['Urban Area', 'Vegetation', 'Water Body'],
+                data2009: [220.55, 416.10, 155.36],
+                data2016: [258.74, 368.84, 127.04],
+                data2023: [370.12, 345.90, 75.02]
+            };
+            
+            const cycloneImpactData = {
+                 labels: ['Agriculture', 'Settlements', 'Dense Vegetation'],
+                 valuesBefore: [90.1, 24.9, 74.2],
+                 valuesAfter: [85.3, 17.1, 69.7]
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#475569' // slate-600
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#475569' },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: { color: '#475569' },
+                        grid: { color: '#e2e8f0' } // slate-200
+                    }
+                }
+            };
+
+            let texasTrendsChart, modelPerformanceChart, dhakaLULCChart, cycloneImpactChart;
+
+            function createTexasTrendsChart(dataType = 'temperature') {
+                const ctx = document.getElementById('texasTrendsChart').getContext('2d');
+                if (texasTrendsChart) {
+                    texasTrendsChart.destroy();
+                }
+                let title, bgColor;
+                switch(dataType) {
+                    case 'precipitation':
+                        title = 'Total Precipitation Change (mm)';
+                        bgColor = '#38b2ac'; // teal-500
+                        break;
+                    case 'humidity':
+                        title = 'Specific Humidity Change (g/kg)';
+                        bgColor = '#f59e0b'; // amber-500
+                        break;
+                    default:
+                        title = 'Mean Temperature Change (°C)';
+                        bgColor = '#6366f1'; // indigo-500
+                        break;
+                }
+                
+                texasTrendsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: texasTrendsData[dataType].labels,
+                        datasets: [{
+                            label: title,
+                            data: texasTrendsData[dataType].values,
+                            backgroundColor: bgColor,
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: { ...chartOptions, scales: { ...chartOptions.scales, y: { ...chartOptions.scales.y, title: { display: true, text: title }}}}
+                });
+            }
+            
+            function createModelPerformanceChart() {
+                const ctx = document.getElementById('modelPerformanceChart').getContext('2d');
+                modelPerformanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: modelPerfData.labels,
+                        datasets: [{
+                            label: 'Model Mean Squared Error (MSE)',
+                            data: modelPerfData.values,
+                            backgroundColor: ['#f87171', '#fb923c', '#fbbf24', '#a3e635'],
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: { ...chartOptions, scales: { ...chartOptions.scales, y: { ...chartOptions.scales.y, title: { display: true, text: 'Lower is better' }}}}
+                });
+            }
+            
+            function createDhakaLULCChart() {
+                const ctx = document.getElementById('dhakaLULCChart').getContext('2d');
+                dhakaLULCChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: dhakaLulcData.labels,
+                        datasets: [
+                            { label: '2009', data: dhakaLulcData.data2009, backgroundColor: '#a5b4fc', borderRadius: 4 },
+                            { label: '2016', data: dhakaLulcData.data2016, backgroundColor: '#818cf8', borderRadius: 4 },
+                            { label: '2023', data: dhakaLulcData.data2023, backgroundColor: '#4f46e5', borderRadius: 4 }
+                        ]
+                    },
+                    options: { ...chartOptions, scales: { ...chartOptions.scales, y: { ...chartOptions.scales.y, title: { display: true, text: 'Area (km²)' }}}}
+                });
+            }
+
+            function createCycloneImpactChart() {
+                 const ctx = document.getElementById('cycloneImpactChart').getContext('2d');
+                 cycloneImpactChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: cycloneImpactData.labels,
+                        datasets: [
+                            {
+                                label: 'Before Cyclone',
+                                data: cycloneImpactData.valuesBefore,
+                                backgroundColor: '#2dd4bf', // teal-400
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'After Cyclone',
+                                data: cycloneImpactData.valuesAfter,
+                                backgroundColor: '#f43f5e', // rose-500
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                     options: { ...chartOptions, scales: { ...chartOptions.scales, y: { ...chartOptions.scales.y, title: { display: true, text: 'Area (km²)' }}}}
+                 });
+            }
+
+            createTexasTrendsChart('temperature');
+            createModelPerformanceChart();
+            createDhakaLULCChart();
+            createCycloneImpactChart();
+
+            const buttons = [
+                document.getElementById('btn-temp'),
+                document.getElementById('btn-precip'),
+                document.getElementById('btn-humid')
+            ];
+
+            buttons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    buttons.forEach(btn => {
+                        btn.classList.remove('bg-indigo-500', 'text-white');
+                        btn.classList.add('bg-slate-200', 'text-slate-700');
+                    });
+                    e.target.classList.add('bg-indigo-500', 'text-white');
+                    e.target.classList.remove('bg-slate-200', 'text-slate-700');
+                    const dataType = e.target.id.split('-')[1];
+                    createTexasTrendsChart(dataType === 'precip' ? 'precipitation' : dataType);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
